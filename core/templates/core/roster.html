@@ -1,0 +1,53 @@
+{% extends 'core/layout.html' %}
+{% load bootstrap3 %}
+
+{% bootstrap_css %}
+
+{% block content %}
+  {% for period in periods %}
+    <div id={{period.name}}>
+      <span>{{ period.name }}</span>
+      <span>Payscale: {{ period.payscale }}</span>
+      <span>Total Students: {{ period.student_set.count }}</span>
+      <span>Class Average: {{ period.class_average }}</span>
+      <span>Class Bonus Total: {{ period.total_bonuses }}</span>
+    </div>
+
+    <table id='{{ period.name }}-students' class='table table-striped'>
+      <thead>
+        <th>Student</th>
+        <th>Cash</th>
+        <th>Recent Behavior</th>
+        <th>Jobs</th>
+        <th>Rights</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {% for student in period.student_set.all %}
+          <tr id='student-{{ student.pk }}'>
+            <td>{{ student.user.get_full_name }}</td>
+            <td>{{ student.cash }}</td>
+            <td>
+              {% if student.well_behaved %}
+                {% bootstrap_icon 'certificate' %}
+              {% endif %}
+            </td>
+            <td>
+              <ul>
+                {% for j in student.job_set.all %}
+                  <li>{{ j.name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>
+              <ul>
+                {% for r in student.right_set.all %}
+                  <li>{{ r.name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% endfor %}
+    </table>
+  {% endfor %}
+{% endblock %}
